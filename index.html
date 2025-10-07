@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dekho to kitna jante ho 💖</title>
+<style>
+    body {
+        font-family: 'Comic Sans MS', cursive, sans-serif;
+        background: linear-gradient(to bottom, #ffe6f0, #fff0f6);
+        text-align: center;
+        padding: 20px;
+        color: #800000;
+        overflow-x: hidden;
+        margin: 0;
+    }
+
+    h1 {
+        font-size: 2.5em;
+        margin-bottom: 20px;
+        animation: fadeInDown 1s ease;
+    }
+
+    .container {
+        background: #fff0f5;
+        padding: 20px;
+        margin: 20px auto;
+        max-width: 90%;
+        border-radius: 20px;
+        box-shadow: 0px 0px 20px rgba(0,0,0,0.2);
+        animation: fadeIn 1s ease;
+    }
+
+    button {
+        padding: 12px 20px;
+        border: none;
+        background: #c71585;
+        color: white;
+        border-radius: 12px;
+        cursor: pointer;
+        margin: 8px 5px;
+        font-size: 1em;
+        transition: transform 0.2s, background 0.3s, box-shadow 0.2s;
+        min-width: 100px;
+    }
+
+    button:hover {
+        background: #ff3399;
+        transform: scale(1.1);
+        box-shadow: 0px 5px 15px rgba(0,0,0,0.2);
+    }
+
+    #heart {
+        width: 50px;
+        position: absolute;
+        cursor: pointer;
+        transition: transform 0.2s;
+        display: none;
+        user-select: none;
+        touch-action: manipulation;
+    }
+
+    #quiz-result {
+        font-size: 1.1em;
+        margin-top: 15px;
+        animation: fadeIn 0.5s ease;
+    }
+
+    @keyframes fadeIn {
+        0% {opacity: 0;}
+        100% {opacity: 1;}
+    }
+
+    @keyframes fadeInDown {
+        0% {opacity: 0; transform: translateY(-50px);}
+        100% {opacity: 1; transform: translateY(0);}
+    }
+
+    /* Confetti Styles */
+    .confetti {
+        position: fixed;
+        width: 10px;
+        height: 10px;
+        background: #ff3399;
+        opacity: 0.8;
+        z-index: 9999;
+        pointer-events: none;
+        animation: fall 3s linear infinite;
+    }
+
+    @keyframes fall {
+        0% { transform: translateY(-10px) rotate(0deg);}
+        100% { transform: translateY(100vh) rotate(360deg);}
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 768px) {
+        h1 { font-size: 2em; }
+        button { padding: 10px 15px; font-size: 0.9em; }
+        #heart { width: 40px; }
+    }
+
+    @media (max-width: 480px) {
+        h1 { font-size: 1.7em; }
+        button { padding: 8px 12px; font-size: 0.85em; }
+        #heart { width: 35px; }
+    }
+</style>
+</head>
+<body>
+
+<h1>💖 Dekho to kitna jante ho 💖</h1>
+
+<div class="container" id="quiz-container">
+    <h2 id="question"></h2>
+    <div id="options"></div>
+    <p id="quiz-result"></p>
+</div>
+
+<div class="container" id="game-container" style="display:none;">
+    <h2>Catch the Heart Game ❤️</h2>
+    <p>Click on the heart as fast as you can! Score 10 to win.</p>
+    <img src="img/heart.png" id="heart">
+    <p>Score: <span id="score">0</span></p>
+</div>
+
+<script>
+window.onload = function() {
+
+const quizzes = [
+    { q: "Where did we share our first hug?", options: ["Bus to Pune", "Park", "Temple", "Cafe"], answer: 0 },
+    { q: "What is my favorite color?", options: ["Red", "Black", "Blue", "Green"], answer: 1 },
+    { q: "When did I first propose?", options: ["25th Aug", "27th Aug", "29th Aug", "1st Sep"], answer: 1 },
+    { q: "Which city did we visit in July 2025?", options: ["Pune", "Hyderabad", "Mumbai", "Aurangabad"], answer: 1 },
+    { q: "What is Shruti's favorite dish?", options: ["Pizza", "Kadhi Bhat", "Biryani", "Pasta"], answer: 1 },
+    { q: "What gift did I give on first birthday?", options: ["Ring", "Teddy Panda", "Jacket", "Kurti"], answer: 1 },
+    { q: "What was our first movie date?", options: ["Paradise Biryani & Lake View Park", "City Mall", "Temple visit", "Cafe date"], answer: 0 },
+    { q: "When was our first Valentine Week?", options: ["Jan 2025", "Feb 2024", "Feb 2025", "March 2025"], answer: 2 },
+    { q: "What is Shruti's favorite color besides black?", options: ["Red/Purple", "Yellow/Blue", "Green/Orange", "White/Pink"], answer: 0 },
+    { q: "What was our 11th month anniversary?", options: ["24th July", "25th July", "26th July", "27th July"], answer: 1 }
+];
+
+let currentQuiz = 0;
+let score = 0;
+
+function showQuiz() {
+    const q = quizzes[currentQuiz];
+    document.getElementById('question').innerText = q.q;
+    const optionsDiv = document.getElementById('options');
+    optionsDiv.innerHTML = '';
+    q.options.forEach((opt, index) => {
+        const btn = document.createElement('button');
+        btn.innerText = opt;
+        btn.onclick = () => checkAnswer(index);
+        optionsDiv.appendChild(btn);
+    });
+    document.getElementById('quiz-result').innerText = '';
+}
+
+function checkAnswer(selected) {
+    const q = quizzes[currentQuiz];
+    const res = document.getElementById('quiz-result');
+    if (selected === q.answer) res.innerText = "🎉 Correct!";
+    else res.innerText = "❌ Wrong! Try the next one.";
+
+    currentQuiz++;
+    if(currentQuiz < quizzes.length){
+        setTimeout(showQuiz, 1000);
+    } else {
+        setTimeout(startGame, 1000);
+    }
+}
+
+function startGame() {
+    document.getElementById('quiz-container').style.display = 'none';
+    document.getElementById('game-container').style.display = 'block';
+    heart.style.display = 'block';
+}
+
+const heart = document.getElementById('heart');
+heart.addEventListener('click', () => {
+    score++;
+    document.getElementById('score').innerText = score;
+
+    // Move heart randomly inside viewport
+    let x = Math.random() * (window.innerWidth - heart.offsetWidth - 10);
+    let y = Math.random() * (window.innerHeight - heart.offsetHeight - 10);
+    heart.style.left = x + "px";
+    heart.style.top = y + "px";
+
+    // Animation
+    heart.style.transform = `scale(1.3) rotate(${Math.random()*30-15}deg)`;
+    setTimeout(()=>{heart.style.transform = "scale(1) rotate(0deg)";}, 200);
+
+  if(score >= 10){
+    alert("🎉 You reached 10! Moving to next page.");
+    setTimeout(() => { window.location.href = "main.html"; }, 100);
+}
+
+});
+
+// Start first quiz
+showQuiz();
+
+};
+</script>
+    
+</body>
+</html>
+
+
+
